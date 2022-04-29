@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <title>Firebase:v9:Chatアプリ</title>
+</head>
+<body>
+
+        <!-- コンテンツ表示画面 -->
+
+        <div>
+            <div> 名前：<input type="text" id="uname"> </div>
+            <div>
+                <textarea id="text" cols="30" rows="10"></textarea>
+                <button id="send">送信</button>
+            </div>
+            <div id="output"></div>
+        </div>
+        <!--/ コンテンツ表示画面 -->
+
+
+
+        <!-- JQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <!-- JQuery -->
+
+
+        <!--** 以下Firebase **-->
+        <script type="module">
+            // Import the functions you need from the SDKs you need
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js";
+            import {
+                getDatabase,
+                ref,
+                push,
+                set,
+                onChildAdded,
+                remove,
+                onChildRemoved,
+            } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-database.js";
+            // Your web app's Firebase configuration
+            const firebaseConfig = {
+                apiKey: "AIzaSyBT8TQ69OH5mpRk0RtV5aeQrtFFp_pOVLI",
+                authDomain: "gs23-43ebc.firebaseapp.com",
+                databaseURL: "https://gs23-43ebc-default-rtdb.firebaseio.com",
+                projectId: "gs23-43ebc",
+                storageBucket: "gs23-43ebc.appspot.com",
+                messagingSenderId: "979831966196",
+                appId: "1:979831966196:web:41a319ce97b264648c51a1"
+            };
+
+
+            const app = initializeApp(firebaseConfig);
+            const db = getDatabase(app); //RealtimeDBに接続
+            const dbRef = ref(db, "chat"); //RealtimeDB内の"chat"を使う
+
+            // refとは参照するという意味
+            $('#send').on('click', function () {
+
+                const uname = $('#uname').val();
+                const text = $('#text').val();
+
+                // 必ず入力されたものが取得できているか、コンソールログで確認する
+                console.log(uname, "名前");
+                console.log(text, "テキスト");
+
+                // データの塊を作成します
+                const msg = {
+                    uname: uname,
+                    text: text,
+                };
+
+                const newPostRef = push(dbRef);
+                set(newPostRef, msg);
+
+                // 入力欄を空にする方法
+                $("#uname").val("");
+                $("#text").val("");
+
+
+                // 受信処理を記述する
+
+            });
+
+            onChildAdded(dbRef, function (data) {
+                const msg = data.val();
+                // console.log(msg, "dataを取得");
+
+                let html = `
+                    <P>${msg.uname}</p>
+                    <p>${msg.text}</p>
+                `;
+                $("#output").append(html);
+            });
+
+        </script>
+    </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
